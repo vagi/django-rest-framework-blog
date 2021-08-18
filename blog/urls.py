@@ -3,6 +3,6 @@ from .api import CategoryViewSet
 
 
 router = routers.DefaultRouter()
-router.register('api/category', CategoryViewSet, 'category')
+router.register('api/categories', CategoryViewSet, 'categories')
 
 urlpatterns = router.urls
