@@ -5,7 +5,7 @@ from .models import Category
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'category')
-    list_display_links = ('id', 'category')
+    list_display_links = ('id',)
     search_fields = ('id', 'category')
     list_editable = ('category',)
 
