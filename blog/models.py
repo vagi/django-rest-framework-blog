@@ -21,7 +21,7 @@ class Category(models.Model):
 class Post(models.Model):
     headline = models.CharField(max_length=200)
     post_text = models.TextField()
-    pub_date = models.DateTimeField('date_published')
+    pub_date = models.DateField('date_published')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)   # Post has Many-To-One relationship with a Category
     author = models.ForeignKey(Author, on_delete=models.CASCADE)   # Post has Many-To-One relationship with an Author
 
@@ -35,7 +35,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)    # Comment has Many-To-One relationship with a Post
     comment_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date_commented')
+    pub_date = models.DateField('date_commented')
 
     def __str__(self):
         return self.comment_text
