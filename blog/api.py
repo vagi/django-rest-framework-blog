@@ -6,7 +6,7 @@ from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, C
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = [
-        permissions.AllowAny    # change to IsAuthenticated
+        permissions.IsAuthenticated    # change to IsAuthenticated
     ]
     serializer_class = CategorySerializer
 
@@ -14,7 +14,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
     serializer_class = AuthorSerializer
 
@@ -30,6 +30,6 @@ class PostViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
     serializer_class = CommentSerializer
