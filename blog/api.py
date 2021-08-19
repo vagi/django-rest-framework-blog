@@ -22,7 +22,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
     ]
     serializer_class = PostSerializer
 
@@ -33,4 +33,3 @@ class CommentViewSet(viewsets.ModelViewSet):
         permissions.AllowAny
     ]
     serializer_class = CommentSerializer
-
