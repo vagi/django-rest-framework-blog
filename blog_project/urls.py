@@ -19,7 +19,7 @@ sys.path.append("..") # Adds higher directory to python modules path.
 from django.contrib import admin
 from rest_framework.authtoken.views import obtain_auth_token
 from django.urls import path, include
-from blog.api import Logout
+from blog.api import user_logout
 
 
 urlpatterns = [
@@ -28,5 +28,5 @@ urlpatterns = [
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('', include('blog.urls')),
     # Here is the path to remove current user's token - logout action
-    path('api-token-logout/', Logout, name='api-token-logout'),
+    path('api-token-logout/', user_logout, name='api-token-logout'),
 ]

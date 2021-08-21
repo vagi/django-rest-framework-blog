@@ -1,11 +1,11 @@
 from django.contrib.auth import logout
-
-from .models import Category, Author, Post, Comment
 from rest_framework import viewsets, permissions, status
 from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
 from rest_framework.response import Response
 #from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
+from .models import Category, Author, Post, Comment
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -41,11 +41,11 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 @api_view(["GET"])
 @permission_classes([permissions.IsAuthenticated])
-def Logout(request):
+def user_logout(request):
     '''
     This method deletes current user's auth token via GET request,
     so the user will be logged out
     '''
     request.user.auth_token.delete()
     logout(request)
-    return Response('User Logged out successfully')
+    return Response('User logged out successfully!')
