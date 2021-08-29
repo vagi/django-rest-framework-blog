@@ -36,6 +36,7 @@ class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
 
 
 class PostViewSet(CacheMixin, viewsets.ModelViewSet):
+    cache_timeout = 60 * 20
     queryset = Post.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
