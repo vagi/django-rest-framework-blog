@@ -2,23 +2,32 @@ from django.contrib.auth import logout
 from rest_framework import viewsets, permissions, status
 from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes, cach
-from .models import Category, Author, Post, Comment
+from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.cache import cache_page
+from .models import Category, Author, Post, Comment
 
 
+# This class implements cashing of choosen viewset with designed timeout
+class CacheMixin(object):
+    cache_timeout = 60 * 10
 
-@cache_page(60 * 15)
-class CategoryViewSet(viewsets.ModelViewSet):
+    def get_cache_timeout(self):
+        return self.cache_timeout
+
+    def dispatch(self, *args, **kwargs):
+        return cache_page(self.get_cache_timeout())(super(CacheMixin, self).dispatch)(*args, **kwargs)
+
+
+class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = [
-        permissions.IsAuthenticated    # change to IsAuthenticated
+        permissions.IsAuthenticated
     ]
     serializer_class = CategorySerializer
 
 
-@cache_page(60 * 15)
-class AuthorViewSet(viewsets.ModelViewSet):
+
+class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Author.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
@@ -26,8 +35,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthorSerializer
 
 
-@cache_page(60 * 25)
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Post.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
@@ -35,8 +43,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
 
-@cache_page(60 * 15)
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
