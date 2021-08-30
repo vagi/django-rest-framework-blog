@@ -2,7 +2,7 @@ from django.views.decorators.cache import cache_page
 
 
 # This class implements cashing of choosen viewset with designed timeout
-class CacheMixin(object):
+class CacheMixin():
     cache_timeout = 60 * 10
 
     def get_cache_timeout(self):
