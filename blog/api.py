@@ -1,21 +1,17 @@
 from django.contrib.auth import logout
 from rest_framework import viewsets, permissions, status
-from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from django.views.decorators.cache import cache_page
 from .models import Category, Author, Post, Comment
+from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
+from .mixin import CacheMixin
 
+# Alternative approach of caching
+#from django.views.decorators.cache import cache_page
+#from django.utils.decorators import method_decorator
 
-# This class implements cashing of choosen viewset with designed timeout
-class CacheMixin(object):
-    cache_timeout = 60 * 10
-
-    def get_cache_timeout(self):
-        return self.cache_timeout
-
-    def dispatch(self, *args, **kwargs):
-        return cache_page(self.get_cache_timeout())(super(CacheMixin, self).dispatch)(*args, **kwargs)
+#@method_decorator(cache_page(60 * 5), name='dispatch')
+#class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -24,7 +20,6 @@ class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
         permissions.IsAuthenticated
     ]
     serializer_class = CategorySerializer
-
 
 
 class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
