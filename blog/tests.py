@@ -1,4 +1,6 @@
+#import unittest
 import datetime
+
 from django.urls import reverse
 from django.contrib.auth.models import User
 
@@ -10,22 +12,11 @@ from rest_framework.test import APIClient
 from .models import Author, Post, Category, Comment
 
 
-# To bypass authentication entirely and force all requests by the test client
-# to be automatically treated as authenticated
-
-#user = User.objects.get(username='lauren')
-#client = APIClient()
-#client.force_authenticate(user=None, token=None)
-# Include an appropriate `Authorization:` header on all requests.
-
-# token = Token.objects.get(user__username='admin')
-# client = APIClient()
-# client.credentials(HTTP_AUTHORIZATION='Token 9f56fa6ea710e301adc0ab26f6295d9441a70bb0')
-
-
-class PostsTests(APITestCase):
-
-    # Include an appropriate `Authorization:` header on all requests.
+class BlogTests(APITestCase):
+    '''
+    This class provides testing of Blog creation
+    '''
+    # This method creates new user and its token, author, category and one post
     def setUp(self):
         user_test_01 = User.objects.create_user(username='Horowitz', password='ydtgrty1')
         user_test_01.save()
@@ -52,14 +43,38 @@ class PostsTests(APITestCase):
             pub_date=datetime.date.today(),
         )
 
+
+    # Ensure the new post has been published
     def test_posts_list(self):
         # Header for authorization
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
+
         # Checking whether the post from setUp() method has been published
         response = self.client.get('/api/posts/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 1)
+
+
+    # Ensure we can create a comment to the post
+    def test_create_comment_to_post(self):
+        # Header for authorization
+        client = APIClient
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
+
+        data = {
+            "post": 1,
+            'comment_text': 'Excellent explanataion, thanks!',
+            'pub_date': datetime.date.today(),
+            }
+
+        response = self.client.post('/api/comments/', data)
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Comment.objects.count(), 1)
+        self.assertEqual(Comment.objects.get().comment_text, 'Excellent explanataion, thanks!')
+
+
 
 
 
