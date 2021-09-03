@@ -23,7 +23,7 @@ class BlogTests(APITestCase):
         self.user_test_01_token = Token.objects.create(user=user_test_01)
 
         self.new_category = Category.objects.create(
-            category='Computer Science'
+            category=['Computer Science']
         )
 
         self.new_author = Author.objects.create(
@@ -50,10 +50,11 @@ class BlogTests(APITestCase):
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
 
-        # Checking whether the post from setUp() method has been published
+        # Checking whether the posts
         response = self.client.get('/api/posts/')
+        #print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data["results"]), 1)
+        self.assertEqual(Post.objects.count(), 1)
 
 
     # Ensure we can create a comment to the post
@@ -64,42 +65,30 @@ class BlogTests(APITestCase):
 
         data = {
             "post": 1,
-            'comment_text': 'Excellent explanataion, thanks!',
+            'comment_text': 'Excellent explanation, thanks!',
             'pub_date': datetime.date.today(),
             }
-
         response = self.client.post('/api/comments/', data)
-        print(response.data)
+        #print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Comment.objects.count(), 1)
-        self.assertEqual(Comment.objects.get().comment_text, 'Excellent explanataion, thanks!')
+        self.assertEqual(Comment.objects.get().comment_text, 'Excellent explanation, thanks!')
 
 
+    def test_create_another_post(self):
+        # Header for authorization
+        client = APIClient
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
 
-
-
-
-
-
-
-
-
-
-
-
-# class PostsTests(APITestCase, APIClient):
-#
-#     def test_list_all_posts(self):
-#         response = self.client.get('/api/posts/')
-#         print(response.data)
-
-    # def test_create_post(self):
-    #     """
-    #     Ensure we can create a new account object.
-    #     """
-    #     url = reverse('api/posts')
-    #     data = {'name': 'DabApps'}
-    #     response = self.client.post(url, data, format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     self.assertEqual(Account.objects.count(), 1)
-    #     self.assertEqual(Account.objects.get().name, 'DabApps')
+        data = {
+            'headline': 'Second Post',
+            'post_text': 'Here must be a very long useless text',
+            'category': 1,
+            'author': 1,
+            'pub_date': datetime.date.today(),
+            }
+        response = self.client.post('/api/posts/', data)
+        #print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.count(), 2)
+        self.assertEqual(Post.objects.get(pk=2).headline, 'Second Post')
