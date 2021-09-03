@@ -1,21 +1,28 @@
 from django.contrib.auth import logout
 from rest_framework import viewsets, permissions, status
-from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
 from rest_framework.response import Response
-#from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from .models import Category, Author, Post, Comment
+from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
+from .mixin import CacheMixin
+
+# Alternative approach of caching
+#from django.views.decorators.cache import cache_page
+#from django.utils.decorators import method_decorator
+
+#@method_decorator(cache_page(60 * 5), name='dispatch')
+#class CategoryViewSet(viewsets.ModelViewSet):
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = [
-        permissions.IsAuthenticated    # change to IsAuthenticated
+        permissions.IsAuthenticated
     ]
     serializer_class = CategorySerializer
 
 
-class AuthorViewSet(viewsets.ModelViewSet):
+class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Author.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
@@ -23,7 +30,8 @@ class AuthorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthorSerializer
 
 
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(CacheMixin, viewsets.ModelViewSet):
+    cache_timeout = 60 * 20
     queryset = Post.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
@@ -31,7 +39,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = [
         permissions.IsAuthenticated
