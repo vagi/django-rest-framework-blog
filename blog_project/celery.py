@@ -18,6 +18,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'change_author_is_notified_to_true': {
         'task': 'blog.tasks.change_author_is_notified_to_true',
-        'schedule': crontab(),    # crontab() means 1 min
+        'schedule': crontab(minute=0, hour=0),    # Execute daily at midnight (crontab() means 1 min)
     },
 }
