@@ -1,8 +1,9 @@
 from celery import shared_task, app
+from blog_project.celery import app
 from .models import Author
 
 
-@app.shared_task(name='change_author_is_notified_to_true')
+@app.task
 def change_author_is_notified_to_true():
     author_ids = list(
         Author.objects.filter(
