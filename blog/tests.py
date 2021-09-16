@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 from .models import Author, Post, Category, Comment
-from .tasks import change_author_is_notified_to_true, app
+from .tasks import change_author_is_notified_to_true
 
 
 class BlogTests(APITestCase):
@@ -19,6 +19,9 @@ class BlogTests(APITestCase):
     '''
     # This method creates new user and its token, author, category and one post
     def setUp(self):
+        """
+        Creates new user and its token, new Author, Post, Category for further tests
+        """
         user_test_01 = User.objects.create_user(username='Horowitz', password='ydtgrty1')
         user_test_01.save()
         self.user_test_01_token = Token.objects.create(user=user_test_01)
@@ -48,6 +51,10 @@ class BlogTests(APITestCase):
 
     # Ensure the new post has been published
     def test_posts_list(self):
+        """
+        Testing whether there are Post/s created in setup
+        """
+
         # Header for authorization
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
@@ -61,6 +68,10 @@ class BlogTests(APITestCase):
 
     # Ensure we can create a comment to the post
     def test_create_comment_to_post(self):
+        """
+        Testing creation of new Comment to a Post
+        """
+
         # Header for authorization
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
@@ -81,6 +92,7 @@ class BlogTests(APITestCase):
         """
         Testing creation of new Post
         """
+
         # Header for authorization
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
@@ -103,10 +115,10 @@ class BlogTests(APITestCase):
         """
         Testing change of Author's flag 'is_notified' from False to True
         """
+
         # Header for authorization
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
 
-        # print("Author:", Author.objects.get().is_notified)    # debugging
         self.task = change_author_is_notified_to_true()
         self.assertEqual(Author.objects.get().is_notified, True)
