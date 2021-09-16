@@ -144,3 +144,4 @@ CACHES = {
 
 # Setting up the worker
 CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_TIMEZONE = 'Europe/Kiev'
