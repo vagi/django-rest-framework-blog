@@ -13,10 +13,10 @@ admin.site.register(Category, CategoryAdmin)
 
 
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = ('id', 'first_name', 'surname', 'email')
+    list_display = ('id', 'first_name', 'surname', 'email', 'is_notified')
     list_display_links = ('id',)
     search_fields = ('id', 'first_name', 'surname', 'email')
-    list_editable = ('first_name', 'surname')
+    list_editable = ('first_name', 'surname', 'is_notified')
 
 
 admin.site.register(Author, AuthorAdmin)
