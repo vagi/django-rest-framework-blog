@@ -10,6 +10,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 from .models import Author, Post, Category, Comment
+from .tasks import change_author_is_notified_to_true
 
 
 class BlogTests(APITestCase):
@@ -18,6 +19,9 @@ class BlogTests(APITestCase):
     '''
     # This method creates new user and its token, author, category and one post
     def setUp(self):
+        """
+        Creates new user and its token, new Author, Post, Category for further tests
+        """
         user_test_01 = User.objects.create_user(username='Horowitz', password='ydtgrty1')
         user_test_01.save()
         self.user_test_01_token = Token.objects.create(user=user_test_01)
@@ -30,6 +34,7 @@ class BlogTests(APITestCase):
             first_name = "Ben",
             surname = "Horowitz",
             email = "ben@paypal.com",
+            #is_notified = False,
         )
 
         self.new_post = Post.objects.create(
@@ -46,11 +51,15 @@ class BlogTests(APITestCase):
 
     # Ensure the new post has been published
     def test_posts_list(self):
+        """
+        Testing whether there are Post/s created in setup
+        """
+
         # Header for authorization
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
 
-        # Checking whether the posts
+        # Checking whether the posts are exist
         response = self.client.get('/api/posts/')
         #print(response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -59,6 +68,10 @@ class BlogTests(APITestCase):
 
     # Ensure we can create a comment to the post
     def test_create_comment_to_post(self):
+        """
+        Testing creation of new Comment to a Post
+        """
+
         # Header for authorization
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
@@ -76,6 +89,10 @@ class BlogTests(APITestCase):
 
 
     def test_create_another_post(self):
+        """
+        Testing creation of new Post
+        """
+
         # Header for authorization
         client = APIClient
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
@@ -92,3 +109,16 @@ class BlogTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Post.objects.count(), 2)
         self.assertEqual(Post.objects.get(pk=2).headline, 'Second Post')
+
+
+    def test_author_is_notified_status_changed(self):
+        """
+        Testing change of Author's flag 'is_notified' from False to True
+        """
+
+        # Header for authorization
+        client = APIClient
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test_01_token.key)
+
+        self.task = change_author_is_notified_to_true()
+        self.assertEqual(Author.objects.get().is_notified, True)
