@@ -17,7 +17,7 @@ from .mixin import CacheMixin
 class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Category.objects.all()
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = CategorySerializer
 
@@ -25,7 +25,7 @@ class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
 class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Author.objects.all()
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = AuthorSerializer
 
@@ -34,7 +34,7 @@ class PostViewSet(CacheMixin, viewsets.ModelViewSet):
     cache_timeout = 60 * 20
     queryset = Post.objects.all()
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = PostSerializer
 
@@ -42,7 +42,7 @@ class PostViewSet(CacheMixin, viewsets.ModelViewSet):
 class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = CommentSerializer
 
