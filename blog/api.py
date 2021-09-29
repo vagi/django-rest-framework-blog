@@ -2,7 +2,9 @@ from django.contrib.auth import logout
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+
 from .models import Category, Author, Post, Comment
 from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
 from .mixin import CacheMixin
@@ -24,8 +26,10 @@ class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
     ]
     serializer_class = CategorySerializer
     pagination_class = StandardResultsSetPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend,
+                       filters.OrderingFilter]
     filterset_fields = ['category']
+    ordering_fields = ['category']
 
 
 class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -35,8 +39,10 @@ class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
     ]
     serializer_class = AuthorSerializer
     pagination_class = StandardResultsSetPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend,
+                       filters.OrderingFilter]
     filterset_fields = ['surname']
+    ordering_fields = ['id', 'surname']
 
 
 class PostViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -48,10 +54,12 @@ class PostViewSet(CacheMixin, viewsets.ModelViewSet):
     serializer_class = PostSerializer
     # Standard pagination that is set in pagination.py module
     pagination_class = StandardResultsSetPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend,
+                       filters.OrderingFilter]     # [filters.SearchFilter] can be added if we want the search fields
     # This will show fields for filtering of posts.
     # Probably use of headline is not reasonable, for other fields you have a choice
     filterset_fields = ['author', 'category', 'headline']
+    ordering_fields = ['id', 'headline', 'pub_date']
 
 
 class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -61,8 +69,10 @@ class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
     ]
     serializer_class = CommentSerializer
     pagination_class = StandardResultsSetPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend,
+                       filters.OrderingFilter]
     filterset_fields = ['post']
+    ordering_fields = ['id', 'post', 'pub_date']
 
 
 @api_view(["GET"])
