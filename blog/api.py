@@ -2,6 +2,7 @@ from django.contrib.auth import logout
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Category, Author, Post, Comment
 from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
 from .mixin import CacheMixin
@@ -23,6 +24,8 @@ class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
     ]
     serializer_class = CategorySerializer
     pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['category']
 
 
 class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -32,6 +35,8 @@ class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
     ]
     serializer_class = AuthorSerializer
     pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['surname']
 
 
 class PostViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -41,7 +46,12 @@ class PostViewSet(CacheMixin, viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = PostSerializer
+    # Standard pagination that is set in pagination.py module
     pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    # This will show fields for filtering of posts.
+    # Probably use of headline is not reasonable, for other fields you have a choice
+    filterset_fields = ['author', 'category', 'headline']
 
 
 class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -51,6 +61,8 @@ class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
     ]
     serializer_class = CommentSerializer
     pagination_class = StandardResultsSetPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['post']
 
 
 @api_view(["GET"])
