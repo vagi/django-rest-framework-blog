@@ -5,6 +5,8 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import Category, Author, Post, Comment
 from .serializers import CategorySerializer, AuthorSerializer, PostSerializer, CommentSerializer
 from .mixin import CacheMixin
+from .pagination import StandardResultsSetPagination
+
 
 # Alternative approach of caching
 #from django.views.decorators.cache import cache_page
@@ -20,6 +22,7 @@ class CategoryViewSet(CacheMixin, viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = CategorySerializer
+    pagination_class = StandardResultsSetPagination
 
 
 class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -28,6 +31,7 @@ class AuthorViewSet(CacheMixin, viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = AuthorSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 class PostViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -37,6 +41,7 @@ class PostViewSet(CacheMixin, viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = PostSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
@@ -45,6 +50,7 @@ class CommentViewSet(CacheMixin, viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly
     ]
     serializer_class = CommentSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 @api_view(["GET"])
