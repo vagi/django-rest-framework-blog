@@ -30,7 +30,7 @@ class Post(models.Model):
         return self.headline
 
     class Meta:
-        ordering = ['headline']
+        ordering = ['pub_date']
 
 
 class Comment(models.Model):
