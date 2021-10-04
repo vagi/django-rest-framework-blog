@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, pre_delete, post_save
 from django.dispatch import receiver
 
 import re
@@ -12,6 +12,11 @@ def check_spec_symbols_in_post_headline(sender, instance, *args, **kwargs):
     """
     Before the post is saved in database we will check whether its headline
     contains special symbols, in case it does the symbols will be removed.
+    :param sender: object
+    :param instance: object
+    :param args:
+    :param kwargs:
+    :return: None
     """
     print(f"Text input: {instance.headline}, author: {instance.author}")    # Printing out Signal
     if re.search(r'[@_!#$%^&*()<>?/\|}{~:.,]', instance.headline):
@@ -20,3 +25,31 @@ def check_spec_symbols_in_post_headline(sender, instance, *args, **kwargs):
     else:
         print("The text is clean, there is no need to remove any symbol:", instance.id,
               instance.headline)    # Printing out Signal
+
+
+@receiver(pre_save, sender=Comment)
+def remove_censored_words_in_comment(sender, instance, *args, **kwargs):
+    """
+    Check and remove censored words from a Comment before the Commment
+    is saved in database
+    :param sender:
+    :param instance:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    pass
+
+
+@receiver(pre_delete, sender=Comment)
+def cancel_deletion_of_comment(sender, instance, *args, **kwargs):
+    """
+    Before deletion of a Comment informs us and cancel that deletion
+    :param sender:
+    :param instance:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    pass
+
