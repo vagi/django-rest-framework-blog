@@ -32,7 +32,7 @@ def check_spec_symbols_in_post_headline(sender, instance, *args, **kwargs) -> No
 @receiver(pre_save, sender=Comment)
 def remove_censored_words_in_comment(sender, instance, *args, **kwargs) -> None:
     """
-    Check and remove censored words from a Comment before the Commment
+    Check and remove if any censored words from a Comment before the Commment
     is saved in database
     :param sender:
     :param instance:
