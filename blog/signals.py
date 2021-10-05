@@ -3,12 +3,14 @@ from django.db.models.signals import pre_save, pre_delete, post_save
 from django.dispatch import receiver
 
 import re
+# Importing library for filtering of censored words
+from profanity_filter import ProfanityFilter
 
 from .models import Post, Comment
 
 
 @receiver(pre_save, sender=Post)
-def check_spec_symbols_in_post_headline(sender, instance, *args, **kwargs):
+def check_spec_symbols_in_post_headline(sender, instance, *args, **kwargs) -> None:
     """
     Before the post is saved in database we will check whether its headline
     contains special symbols, in case it does the symbols will be removed.
@@ -28,7 +30,7 @@ def check_spec_symbols_in_post_headline(sender, instance, *args, **kwargs):
 
 
 @receiver(pre_save, sender=Comment)
-def remove_censored_words_in_comment(sender, instance, *args, **kwargs):
+def remove_censored_words_in_comment(sender, instance, *args, **kwargs) -> None:
     """
     Check and remove censored words from a Comment before the Commment
     is saved in database
@@ -38,7 +40,10 @@ def remove_censored_words_in_comment(sender, instance, *args, **kwargs):
     :param kwargs:
     :return:
     """
-    pass
+    print(f"Comment input: {instance.comment_text}")    # printing out Signal
+    pf = ProfanityFilter()
+    instance.comment_text = pf.censor(instance.comment_text)
+    print(f"The text is filtered - the output is: {instance.comment_text}")    # printing out Signal
 
 
 @receiver(pre_delete, sender=Comment)
