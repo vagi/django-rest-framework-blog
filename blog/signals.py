@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_save, pre_delete, post_save
+from django.db.models.signals import pre_save, post_save, pre_delete, post_delete
 from django.dispatch import receiver
 
 import re
@@ -34,11 +34,11 @@ def remove_censored_words_in_comment(sender, instance, *args, **kwargs) -> None:
     """
     Check and remove if any censored words from a Comment before the Commment
     is saved in database
-    :param sender:
-    :param instance:
+    :param sender: object
+    :param instance: object
     :param args:
     :param kwargs:
-    :return:
+    :return: None
     """
     print(f"Comment input: {instance.comment_text}")    # printing out Signal
     pf = ProfanityFilter()
@@ -47,14 +47,31 @@ def remove_censored_words_in_comment(sender, instance, *args, **kwargs) -> None:
 
 
 @receiver(pre_delete, sender=Comment)
-def cancel_deletion_of_comment(sender, instance, *args, **kwargs):
+def blog_comment_cancel_pre_delete(sender, instance, *args, **kwargs) -> None:
     """
     Before deletion of a Comment informs us and cancel that deletion
-    :param sender:
-    :param instance:
+    :param sender: object
+    :param instance: object
     :param args:
     :param kwargs:
-    :return:
+    :return: None
     """
-    pass
+    if instance.id:
+        print(f"ID {instance.id} is going to be removed!")
+        raise Exception(f'Do not delete the Comment with ID:{instance.id}')  # cancel the deletion
+        # instance.protected = True
+        # instance.save()
+        # print(f"ID {instance.id} Its protection status: {instance.protected}")
 
+
+@receiver(post_delete, sender=Comment)
+def blog_comment_post_delete(sender, instance, *args, **kwargs) -> None:
+    """
+    Informs us that a Comment was deleted
+    :param sender: object
+    :param instance: object
+    :param args:
+    :param kwargs:
+    :return: None
+    """
+    print(f"{instance.id} has been removed!")

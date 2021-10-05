@@ -37,6 +37,16 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)    # Comment has Many-To-One relationship with a Post
     comment_text = models.CharField(max_length=200)
     pub_date = models.DateField('date_commented')
+    # protected = False
 
     def __str__(self):
         return self.comment_text
+
+    # Customized delete method for Comment Model that would work with Signal pre_delete
+    # def delete(self, *args, **kwargs):
+    #     if self.protected is True:
+    #         print("This commentary is protected")
+    #         return
+    #     else:
+    #         super().delete(*args, **kwargs)  # Call the "real" delete() method.
+
